@@ -1,0 +1,138 @@
+﻿@using UGKPSwithoutEntity.Models;
+@model UGKPSwithoutEntity.Models.User
+
+@{
+    ViewBag.Title = "Family Members";
+}
+
+<div class="container-fluid">
+    <h2>Family Members</h2>
+    <div id="FamilyMemberTab" class="tab-pane">
+        <br />
+        <button data-button="AddMember" type="submit" value="Add Member" class="pull-left btn btn-lg btn-success" onclick="AddNewFamilyMember(0)" data-toggle="modal">
+            Add Member
+        </button>
+
+        <div>
+            <br /><br /><br />
+            <div class="table-responsive">
+                <table id="FamilyMembersTable" class="table table-striped table-responsive">
+                    <thead>
+                        <tr>
+                            <th>Relation</th>
+                            <th>First Name</th>
+                            <th>Last Name</th>
+                            <th>Age</th>
+                            <th>Action(Edit)</th>
+                            <th>Action(Delete)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="SetFamilyMemberList">
+                        
+                    </tbody>
+                </table>
+            </div>
+        </div><br /><br />
+
+
+        <div class="modal fade" id="ModalForAddEditMember" role="dialog">
+
+            <br />
+            @Html.Partial("_AddEditFamilyMembers", new FamilyMember());
+
+        </div>
+
+    </div>
+
+    <div class="modal fade" id="ModalForDeleteMemberConfirmation" role="dialog">
+        <br />
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button class="close" data-dismiss="modal">&times;</button>
+                    <h4 id="ModalTitle">Remove Member</h4>
+                </div>
+                <div class="modal-body">
+                    <h4>Are You Sure You Want To Remove This Member?</h4>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary" data-dismiss="modal">Cancel</button>
+                    <button class="btn btn-danger" onclick="DeleteMemberRecordConfirmed()">Confirm</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+       
+    $("#LoadingStatus").html("Loading...");
+    $.get("/Account/GetFamilyMemberList", null, DataBind);
+    function DataBind(FamilyMemberList) {
+        var SetData = $("#SetFamilyMemberList");
+        for (var i = 0; i < FamilyMemberList.length; i++) {
+            //var date = ("0" + new Date((parseInt(FamilyMemberList[i].DateOfBirth.substr(6)))).getDate()).slice(-2);
+            //var month = ("0" + (new Date((parseInt(FamilyMemberList[i].DateOfBirth.substr(6)))).getMonth() + 1)).slice(-2);
+            if (FamilyMemberList[i].Relation != "Self") {
+                var Data = "<tr class='row_" + FamilyMemberList[i].FamilyMemberID + "'>" +
+                    "<td>" + FamilyMemberList[i].Relation + "</td>" +
+                    "<td>" + FamilyMemberList[i].FirstName + "</td>" +
+                    "<td>" + FamilyMemberList[i].LastName + "</td>" +
+                    "<td>" + FamilyMemberList[i].Age + "</td>" +
+                    "<td>" + "<a href='#' class='btn btn-warning' onclick='EditMemberRecord(" + FamilyMemberList[i].FamilyMemberID + ")'><span class='glyphicon glyphicon-edit'></span></a>" + "</td>" +
+                    "<td>" + "<a href='#' class='btn btn-danger' onclick='DeleteMemberRecord(" + FamilyMemberList[i].FamilyMemberID + ")'><span class='glyphicon glyphicon-trash'></span></a>" + "</td>" +
+                    "</tr>";
+                SetData.append(Data);
+            }
+        }
+        $("#LoadingStatus").html(" ");
+    }
+
+    function AddNewFamilyMember(FamilyMemberID) {
+        $("#ModalTitle").html("Add New Member");
+        $("#MemberAge").removeAttr('readonly');
+        $("#FamilyMemberID").val(FamilyMemberID);
+        $("#ModalForAddEditMember").modal();
+        $("#AddEditMemberForm")[0].reset();
+    }
+
+    function EditMemberRecord(FamilyMemberID) {
+        var url = "/Account/GetFamilyMemberByID?FamilyMemberID=" + FamilyMemberID;
+        $("#ModalTitle").html("Update Member Info");
+        $("#ModalForAddEditMember").modal();
+        $.ajax({
+            type: "GET",
+            url: url,
+            success: function (data) {
+                var obj = JSON.parse(data);
+                var date = ("0" + new Date(obj.DateOfBirth).getDate()).slice(-2);
+                var month = ("0" + (new Date(obj.DateOfBirth).getMonth() + 1)).slice(-2);
+                $("#FamilyMemberID").val(obj.FamilyMemberID);
+                $("#MemberFirstName").val(obj.FirstName);
+                $("#MemberLastName").val(obj.LastName);
+                $("#MemberAge").val(obj.Age);
+                $("#MemberAge").attr('readonly', true);
+                $("#MemberRelation").val(obj.Relation);
+            }
+        })
+    }
+
+    function DeleteMemberRecord(FamilyMemberID) {
+        $("#FamilyMemberID").val(FamilyMemberID)
+        $("#ModalForDeleteMemberConfirmation").modal();
+    }
+
+    function DeleteMemberRecordConfirmed() {
+        var FamilyMemberID = $("#FamilyMemberID").val();
+        var url = "/Account/DeleteFamilyMemberRecord?FamilyMemberID=" + FamilyMemberID;
+        $.ajax({
+            type: "GET",
+            url: url,
+            success: function (data) {
+                $("#ModalForDeleteMemberConfirmation").modal("hide");
+                $(".row_" + FamilyMemberID).remove();
+            }
+        })
+    }
+
+</script>

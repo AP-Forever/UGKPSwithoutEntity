@@ -1,0 +1,223 @@
+﻿@model UGKPSwithoutEntity.Models.EventsViewModel
+
+@{
+    ViewBag.Title = "Events";
+}
+
+<div class="jumbotron jumbotron-fluid text-center" style="height:80vh; background:url('../../Images/Summer Picnic.jpg') no-repeat; background-size: 100% 100%">
+    @if (ViewBag.Message != null)
+    {
+        <div class="alert alert-success">
+            <strong>@ViewBag.Message</strong>
+        </div>
+    }
+    <div class="vcenter" style="color:black">
+        @{
+            if (Model.currEvent.EventID > 0)
+            {
+                <h1 style="color:black">@Model.currEvent.Event_Name</h1>
+                <h3 style="color:black">@Model.currEvent.Event_Description</h3><br />
+                <div><span class="glyphicon glyphicon-map-marker"></span> @Model.currEvent.Event_Location</div>
+                <div><span class="glyphicon glyphicon-time"></span> @Model.currEvent.Event_StartDate.ToLongDateString()</div><br />
+                <div>
+                    <table align="center">
+                        <tr style="font-size: 40px">
+                            <td class="col-md-offset-4" id="Days"></td>
+                            <td id="Hours"></td>
+                            <td id="Minutes"></td>
+                            <td id="Seconds"></td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-offset-4 col-md-2">Days</td>
+                            <td class="col-md-2">Hours</td>
+                            <td class="col-md-2">Minutes</td>
+                            <td class="col-md-2">Seconds</td>
+                        </tr>
+                    </table>
+                </div>
+                <br />
+                <div class="form-group">
+                    <input type="submit" value="Register" class="btn btn-lg btn-primary" data-target="#ModalForEventRegister" data-toggle="modal" id="ButtonForEventRegisterForm" />
+                </div>
+            }
+            else
+            {
+                <h1 style="color:black">Coming Soon</h1>
+
+            }
+        }
+
+    </div>
+</div>
+
+<div class="modal" id="ModalForEventRegister" role="dialog">
+    <br />
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" data-dismiss="modal">&times;</button>
+                <h3>Event Registration</h3>
+            </div>
+            <div class="modal-body">
+                @if (ViewData["LoginToRegister"] != null)
+                {
+                    <div class="alert alert-warning">
+                        <strong>@ViewData["LoginToRegister"].ToString()</strong>
+                    </div>
+                }
+                else
+                {
+                    <div class="alert alert-info">
+                        <strong>To register additional members, please add them in your profile from @Html.ActionLink("HERE", "FamilyMembers", "Account")</strong>
+                    </div>
+                    if (Model.currEvent.Fees_Membership != 0)
+                    {
+                        <div class="alert alert-info">
+
+                            <strong>Membership Fees for this event: $@Model.currEvent.Fees_Membership</strong>
+
+                        </div>
+                    }
+                    using (Html.BeginForm())
+                    {
+                        @Html.AntiForgeryToken()
+
+                        <div class="form-horizontal">
+                            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                            <table class="table table-bordered table-striped">
+                                <tr>
+                                    <th>Please select attending members.</th>
+                                    <th>Attending?</th>
+                                </tr>
+                                @for (int i = 0; i < Model.Members.Count; i++)
+                                {
+                                    <tr>
+                                        <td>
+                                            @Html.HiddenFor(model => model.Members[i].FamilyMemberID)
+                                            @Html.HiddenFor(model => model.Members[i].FirstName)
+
+                                            @Html.DisplayFor(model => model.Members[i].FirstName)
+
+                                            @Html.HiddenFor(model => model.Members[i].LastName)
+
+                                            @Html.DisplayFor(model => model.Members[i].LastName)
+
+                                            @{
+                                                double MemberAge = Model.Members[i].Age;
+                                                if (MemberAge <= 5)
+                                                {
+                                                    <span>(free)</span>
+                                                }
+                                                else if (MemberAge <= 10)
+                                                {
+                                                    <span>($@Model.currEvent.Price_Child)</span>
+                                                }
+                                                else
+                                                {
+                                                    <span>($@Model.currEvent.Price_Adult)</span>
+                                                }
+                                            }
+
+                                            @Html.HiddenFor(model => model.Members[i].Age)
+                                        </td>
+                                        <td>
+                                            @Html.CheckBoxFor(model => model.Members[i].IsChecked, new { data_toggle = "toggle", data_on = "Yes", data_off = "No", data_onstyle = "success", data_offstyle = "danger" }) @Html.HiddenFor(x => x.Members[i].IsChecked)
+                                        </td>
+                                    </tr>
+                                }
+                            </table>
+
+                            <div class="form-group">
+                                <input type="submit" value="Register" class="btn btn-primary btn-block" id="EventRegisterSubmitButton" />
+                            </div>
+
+                        </div>
+                    }
+                }
+
+            </div>
+        </div>
+
+
+    </div>
+
+</div>
+
+@if ((ViewData["AlreadyRegisteredForEvent"] != null) || (ViewBag.Message != null))
+{
+    if (ViewData["AlreadyRegisteredForEvent"].ToString() == "yes")
+    {
+        <script>
+            $("#EventRegisterSubmitButton").val("Update");
+            $("#ButtonForEventRegisterForm").val("Edit Registration");
+        </script>
+    }
+    else if (ViewData["AlreadyRegisteredForEvent"].ToString() == "no")
+    {
+        <script>
+            $("#EventRegisterSubmitButton").val("Register");
+            $("#ButtonForEventRegisterForm").val("Register");
+        </script>
+    }
+
+}
+@if (ViewData["RegistrationClosed"] != null)
+{
+    <Script>
+        $("#ButtonForEventRegisterForm").val("Registration Closed");
+        $("#ButtonForEventRegisterForm").attr("disabled", true);
+    </Script>
+}
+@{
+    if (Model.currEvent.EventID > 0)
+    {
+        <div id="about" class="container-fluid">
+            <div class="row">
+                <div class="col-sm-8">
+                    <h3>About Event</h3>
+                    <h4>Getting together with real people in real life makes powerful things happen.</h4>
+                    <p>A platform to register and participate in fun-filled exiciting events throughout the year.</p>
+                </div>
+                <div class="col-sm-4">
+                    <span class="fas fa-users logo"></span>
+                </div>
+            </div>
+        </div>
+    }
+}
+
+<script type="text/javascript">
+    if (@Model.currEvent.EventID> 0) {
+        function CountDown() {
+            var now = new Date();
+            var currTime = now.getTime();
+
+            var remTime = Date.parse('@Model.currEvent.Event_StartDate.ToString()') - currTime;
+
+            var s = Math.floor(remTime / 1000);
+            var m = Math.floor(s / 60);
+            var h = Math.floor(m / 60);
+            var d = Math.floor(h / 24);
+
+            h %= 24;
+            m %= 60;
+            s %= 60;
+
+            h = (h < 10) ? h = "0" + h : h;
+            m = (m < 10) ? m = "0" + m : m;
+            s = (s < 10) ? s = "0" + s : s;
+
+            document.getElementById("Days").innerText = d
+            document.getElementById("Hours").innerText = h
+            document.getElementById("Minutes").innerText = m
+            document.getElementById("Seconds").innerText = s
+
+            setTimeout(CountDown, 1000);
+        }
+
+        CountDown();
+    }
+
+
+</script>
+

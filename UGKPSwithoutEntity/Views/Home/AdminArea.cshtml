@@ -1,0 +1,107 @@
+﻿@using UGKPSwithoutEntity.Models
+
+@model UGKPSwithoutEntity.Models.AdminAreaViewModel
+
+@{
+    ViewBag.Title = "AdminArea";
+    var temp = 0;
+}
+
+<div class="container-fluid">
+    <h3>Admin Area</h3>
+    <div id="successDiv"></div>
+
+    <div class="container">
+        <h2>
+            Send Email To Members <span class="glyphicon glyphicon-plus pull-right" style="color:blue; font-size:x-large" data-toggle="collapse" onclick="ShowAdminAreaPartialView(0)" href="#AdminArea0" id="#glyphiconplusminus_AdminArea0"></span>
+        </h2>
+        <br />
+        <span id="AdminArea0" class="collapse">
+            @Html.Partial("_SendEmailToMembers", new EmailModel())
+        </span>
+    </div>
+
+
+    <div class="container">
+        <h2>
+            (De)Activate Event <span class="glyphicon glyphicon-plus pull-right" style="color:blue; font-size:x-large" data-toggle="collapse" onclick="ShowAdminAreaPartialView(1)" href="#ActivateEvent" id="#glyphiconplusminus_AdminArea1"></span>
+        </h2><br />
+        <span id="AdminArea1" class="collapse">
+            @Html.Partial("_PushEvent", new EventSelectionModel())
+        </span>
+    </div>
+
+    <div class="container">
+        <h2>
+            Add Event <span class="glyphicon glyphicon-plus pull-right" style="color:blue; font-size:x-large" data-toggle="collapse" onclick="ShowAdminAreaPartialView(2)" href="#AddEvent" id="#glyphiconplusminus_AdminArea2"></span>
+        </h2><br />
+        <span id="AdminArea2" class="collapse">
+            @Html.Partial("_AddEvent", new Event())
+        </span>
+    </div>
+
+    <div class="container">
+        <h2>
+            Inquiries <span class="glyphicon glyphicon-plus pull-right" style="color:blue; font-size:x-large" data-toggle="collapse" onclick="ShowAdminAreaPartialView(3)" href="#AddEvent" id="#glyphiconplusminus_AdminArea3"></span>
+        </h2><br />
+             <span id="AdminArea3" class="collapse">
+
+
+                 <div class="container-fluid">
+                    <div class="table-responsive">
+
+
+                         <table id="InquiriesTable" class="table table-bordered table-striped table-hover">
+                             <thead>
+                                 <tr>
+                                     <th></th>
+                                     <th>Name</th>
+                                     <th>Member?</th>
+                                     <th>Email ID</th>
+                                     <th>Contact Number</th>
+                                     <th>Message</th>
+
+                                 </tr>
+                             </thead>
+                             @for (int i = 0; i < Model.Inquiries.Count; i++)
+                             {
+                                 ContactUs _model = new ContactUs();
+                                 _model = Model.Inquiries[i];
+                                 @Html.Partial("_Inquiries", _model);
+                             }
+                         </table>
+
+                    </div>
+
+                </div>
+
+
+                     @*@Html.Partial("_Inquiries", Model.Inquiries)*@
+</span>
+    </div>
+</div>
+
+<script>
+    function ShowAdminAreaPartialView(ID) {
+        var display = $("#AdminArea" + ID).css("display");
+        var icon = document.getElementById("#glyphiconplusminus_AdminArea" + ID);
+        var allElementIcon = document.getElementsByClassName("glyphicon glyphicon-minus pull-right");
+
+        for (i = 0; i < allElementIcon.length; i++) {
+            allElementIcon[i].className = "glyphicon glyphicon-plus pull-right";
+        }
+
+        $("[id ^= AdminArea]").hide();
+
+        if (display == "none") {
+            $("#AdminArea" + ID).show();
+            icon.className = "glyphicon glyphicon-minus pull-right";
+        } else {
+            $("[id^=AdminArea]").hide();
+        }
+    }
+
+    
+</script>
+
+

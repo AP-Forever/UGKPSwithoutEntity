@@ -1,0 +1,295 @@
+﻿@*@model System.Data.DataTable*@
+@using PagedList;
+@using PagedList.Mvc;
+@model  IPagedList<UGKPSwithoutEntity.Models.User>
+
+@{
+    ViewBag.Title = "Users";
+}
+
+<div class="container-fluid">
+    <h3>Welcome @Session["FirstName"] @Session["LastName"]. You are an Admin.</h3><br />
+    @if (TempData["Message"] != null)
+    {
+        <div class="alert alert-success">
+            @Html.Raw(TempData["Message"])
+
+        </div>
+    }
+    <h3>Users:</h3><br />
+
+    @*Show Users Code:
+        0: All
+        1: New Requests
+        2: Active
+        3: Disapproved
+        4: Deactivated*@
+    
+    <div class="col-md-3">
+        <input id="ShowUsers_0" role="button" value="Show All" class="btn btn-info btn-block" onclick="location.href='@Url.Action("Users", "Home", new { FetchCode = 0 })'" />
+    </div>
+    <div class="col-md-2">
+        <input id="ShowUsers_1" type="submit" value="Show New Requests" class="btn btn-primary btn-block" onclick="location.href='@Url.Action("Users", "Home", new { FetchCode = 1 })'" />
+    </div>
+    <div class="col-md-2">
+        <input id="ShowUsers_2" type="submit" value="Show Active" class="btn btn-success btn-block" onclick="location.href='@Url.Action("Users", "Home", new { FetchCode = 2 })'" />
+    </div>
+    <div class="col-md-2">
+        <input id="ShowUsers_3" type="submit" value="Show Disapproved" class="btn btn-secondary btn-block" onclick="location.href='@Url.Action("Users", "Home", new { FetchCode = 3 })'" />
+    </div>
+    <div class="col-md-2">
+        <input id="ShowUsers_4" type="submit" value="Show Deactivated" class="btn btn-danger btn-block" onclick="location.href='@Url.Action("Users", "Home", new { FetchCode = 4 })'" />
+    </div>
+   
+    <br />
+    <br />
+    <br />
+
+    <div class="table-responsive">
+        @using (Html.BeginForm("Users", "Home", FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+            <table id="UsersTable" class="table table-bordered table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th></th>
+
+                        <th>
+                            @if (ViewBag.SortByParameter != null && ViewBag.SortByParameter.ToString() == "FirstName")
+                            {
+                                @Html.ActionLink("Name", "Users", new { sortBy = "FirstNameDesc" });
+                            }
+                            else
+                            {
+                                @Html.ActionLink("Name", "Users", new { sortBy = "FirstName" });
+                            }
+                        </th>
+                        <th>
+                            @if (ViewBag.SortByParameter != null && ViewBag.SortByParameter.ToString() == "EmailID")
+                            {
+                                @Html.ActionLink("Email", "Users", new { sortBy = "EmailIDDesc" });
+                            }
+                            else
+                            {
+                                @Html.ActionLink("Email", "Users", new { sortBy = "EmailID" });
+                            }
+                        </th>
+                        <th>
+                            @if (ViewBag.SortByParameter != null && ViewBag.SortByParameter.ToString() == "Age")
+                            {
+                                @Html.ActionLink("Age", "Users", new { sortBy = "AgeDesc" });
+                            }
+                            else
+                            {
+                                @Html.ActionLink("Age", "Users", new { sortBy = "Age" });
+                            }
+                        </th>
+                        <th>Full Address</th>
+                        <th>
+                            @if (ViewBag.SortByParameter != null && ViewBag.SortByParameter.ToString() == "PhoneNumber")
+                            {
+                                @Html.ActionLink("Contact Number", "Users", new { sortBy = "PhoneNumberDesc" });
+                            }
+                            else
+                            {
+                                @Html.ActionLink("Contact Number", "Users", new { sortBy = "PhoneNumber" });
+                            }
+                        </th>
+                        <th>
+                            @if (ViewBag.SortByParameter != null && ViewBag.SortByParameter.ToString() == "Native")
+                            {
+                                @Html.ActionLink("Native", "Users", new { sortBy = "NativeDesc" });
+                            }
+                            else
+                            {
+                                @Html.ActionLink("Native", "Users", new { sortBy = "Native" });
+                            }
+                        </th>
+                        <th>Status</th>
+                        <th>Action</th>
+                        <th>Investment Opportunities</th>
+                    </tr>
+                </thead>
+                @for (int i = 0; i < Model.Count; i++)
+                {
+                    <tbody>
+                        <tr class="row_@Model[i].UserID">
+                            <td>
+                                @if (Model[i].UserFamily.Count > 1)
+                                {
+                                    <span class="glyphicon glyphicon-plus" style="color:blue" data-toggle="collapse" onclick="ShowFullDirectory(@Model[i].UserID)" href="#FamilyMemberRow_@Model[i].UserID" id="#glyphiconplusminus_@Model[i].UserID"></span>
+                                }
+                            </td>
+                            <td>
+                                @Html.HiddenFor(x => x[i].IsAdmin)
+                                @Html.HiddenFor(x => x[i].UserID)
+                                @Html.HiddenFor(x => x[i].IsNewRequest)
+                                @Html.HiddenFor(x => x[i].IsUserActivated)
+                                @Html.HiddenFor(x => x[i].IsDeactivated)
+
+
+                                @Html.HiddenFor(x => x[i].FirstName) @Html.DisplayFor(model => Model[i].FirstName)
+                                @Html.HiddenFor(x => x[i].LastName) @Html.DisplayFor(model => Model[i].LastName)<br /><br />
+                                @*<input type="submit" value="Show Full Directory" class="btn btn-sm btn-primary pull-left" data-toggle="collapse" href="#FamilyMemberRow_@Model[i].UserID" />*@
+                            </td>
+                            <td>@Html.HiddenFor(x => x[i].EmailID) @Html.DisplayFor(model => Model[i].EmailID)</td>
+                            <td>@Html.HiddenFor(x => x[i].Age) @Html.DisplayFor(model => Model[i].Age) </td>
+                            <td>
+                                @Html.HiddenFor(x => x[i].Address) @Html.DisplayFor(model => Model[i].Address) <br />
+                                @Html.HiddenFor(x => x[i].City) @Html.DisplayFor(model => Model[i].City)
+                                @Html.HiddenFor(x => x[i].State) @Html.DisplayFor(model => Model[i].State)<br />
+                                @Html.HiddenFor(x => x[i].Country) @Html.DisplayFor(model => Model[i].Country)
+                                @Html.HiddenFor(x => x[i].ZipCode) @Html.DisplayFor(model => Model[i].ZipCode)
+                            </td>
+                            <td>@Html.HiddenFor(x => x[i].PhoneNumber) @Html.DisplayFor(model => Model[i].PhoneNumber)</td>
+                            <td>@Html.HiddenFor(x => x[i].Native) @Html.DisplayFor(model => Model[i].Native)</td>
+                            <td>
+                                @if (Model[i].IsAdmin)
+                                {
+                                    <div>ADMIN</div>
+                                }
+                                else if (Model[i].IsNewRequest)
+                                {
+                                    <strong>New Request</strong><br />
+                                }
+                                else if (Model[i].IsUserActivated)
+                                {
+                                    <div>Active</div>
+                                }
+                                else if (Model[i].IsDeactivated)
+                                {
+                                    <div>Deactivated</div>
+                                }
+                                else
+                                {
+                                    <div>Disapproved</div>
+                                }
+                            </td>
+
+                            @if (!(Model[i].IsAdmin))
+                            {
+
+                                <td>
+                                    @Html.DropDownListFor(x => x[i].AccountAction, ViewData["ListOfAccountAction" + Model[i].UserID] as SelectList, "--Select Action--", new { @class = "form-control", @id = "UserAccountAction" + Model[i].UserID })
+                                </td>
+                                <td>
+                                    @Html.CheckBoxFor(x => x[i].InvestAccess.IsInvestTabVisible, new { data_toggle = "toggle", data_on = "Show", data_off = "Hide", data_onstyle = "success", data_offstyle = "danger" })<br />
+                                    @if (Model[i].InvestAccess.HasAcceptedDisclaimer)
+                                    {
+                                        <span>Date Accepted: </span>@Model[i].InvestAccess.DateAccepted.Value.Date.ToString("dd-MM-yyyy")
+                                    }
+                                </td>
+                            }
+                            else
+                            {
+                                <td></td>
+                                <td></td>
+                            }
+
+                        </tr>
+                    </tbody>
+                    if (Model[i].UserFamily.Count > 1)
+                    {
+                        <tr class="collapse" id="FamilyMemberRow_@Model[i].UserID">
+                            <td colspan="9" class="text-center lead" style="background-color:lightblue">
+                                Family Members <br />
+                                <table class="table table-sm table-striped table-condensed">
+                                    <tr style="font-size: 85%">
+                                        <th class="text-center">Relation</th>
+                                        <th class="text-center">First Name</th>
+                                        <th class="text-center">Last Name</th>
+                                        <th class="text-center">Age</th>
+                                    </tr>
+                                    @for (int j = 0; j < Model[i].UserFamily.Count; j++)
+                                    {
+                                        if (Model[i].UserFamily[j].Relation != "Self")
+                                        {
+                                            <tr style="font-size: 70%">
+                                                <td>@Html.DisplayFor(model => Model[i].UserFamily[j].Relation)</td>
+                                                <td>@Html.DisplayFor(model => Model[i].UserFamily[j].FirstName)</td>
+                                                <td>@Html.DisplayFor(model => Model[i].UserFamily[j].LastName)</td>
+                                                <td>@Model[i].UserFamily[j].Age</td>
+                                            </tr>
+                                        }
+                                    }
+                                </table>
+                            </td>
+                        </tr>
+                    }
+                }
+            </table>
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <input type="submit" value="Submit Changes" class="btn btn-default pull-right" />
+                </div>
+            </div>
+            <div class="pull-left">
+                @Html.PagedListPager(Model, page => Url.Action("Users", new { page, sortBy = ViewBag.SortByParameter }))
+            </div>
+
+        }
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $("#@ViewBag.BtnClicked").attr("disabled", true);
+    });
+    function FetchUsers(FetchCode) {
+        if (FetchCode == 0) {
+            window.location.href = "/Home/Users";
+
+        }
+        var url = "/Home/FetchUsers?FetchCode=" + FetchCode;
+
+        $("[id^=ShowUsers_").attr("disabled", false);
+        $("#ShowUsers_" + FetchCode).attr("disabled", true);
+
+        $("[id ^= FamilyMemberRow_]").hide();
+        var allElementIcon = document.getElementsByClassName("glyphicon glyphicon-minus");
+        for (i = 0; i < allElementIcon.length; i++) {
+            allElementIcon[i].className = "glyphicon glyphicon-plus";
+        }
+
+        $.ajax({
+            type: "GET",
+            url: url,
+            success: function (data) {
+                //$("[class^=row_").show();
+                //var UsersList = data;
+                //var allRows = document.querySelectorAll('[class^= "row_"]');
+                //var ShowRowsWithIds = [];
+                //for (i = 0; i < UsersList.length; i++) {
+                //    ShowRowsWithIds[i] = UsersList[i].UserID;
+                //}
+                //$("[class^=row_").hide();
+                //for (i = 0; i < ShowRowsWithIds.length; i++) {
+                //    $(".row_" + ShowRowsWithIds[i]).show();
+                //}
+            }
+        })
+    }
+
+    function ShowFullDirectory(UserID) {
+        var display = $("#FamilyMemberRow_" + UserID).css("display");
+        var icon = document.getElementById("#glyphiconplusminus_" + UserID);
+        var allElementIcon = document.getElementsByClassName("glyphicon glyphicon-minus");
+
+        for (i = 0; i < allElementIcon.length; i++) {
+            allElementIcon[i].className = "glyphicon glyphicon-plus";
+        }
+
+        $("[id ^= FamilyMemberRow_]").hide();
+
+        if (display == "none") {
+            $("#FamilyMemberRow_" + UserID).show();
+            icon.className = "glyphicon glyphicon-minus";
+        } else {
+            $("[id^=FamilyMemberRow_]").hide();
+        }
+
+    }
+
+
+</script>
+

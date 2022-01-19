@@ -1,0 +1,82 @@
+﻿
+@model UGKPSwithoutEntity.Models.Event
+
+@using (Ajax.BeginForm("AddEvent", "Home", new AjaxOptions() { HttpMethod = "POST", OnSuccess = "SuccessInAddEvent" }, new { @id = "AddEventForm" }))
+{
+    @Html.AntiForgeryToken()
+    <div class="col-sm-7">
+        <div class="row">
+            @Html.LabelFor(model => model.Event_Name, htmlAttributes: new { @class = "control-label col-sm-6" })
+            <div class="col-sm-6 form-group">
+                @Html.EditorFor(model => model.Event_Name, new { htmlAttributes = new { @class = "form-control", placeholder = "Please enter Event Name * " } })
+                @Html.ValidationMessageFor(model => model.Event_Name, "", new { @class = "text-danger" })
+            </div>
+
+            @Html.LabelFor(model => model.Event_Location, htmlAttributes: new { @class = "control-label col-sm-6" })
+            <div class="col-sm-6 form-group">
+                @Html.EditorFor(model => model.Event_Location, new { htmlAttributes = new { @class = "form-control", placeholder = "Please enter Event Location * " } })
+                @Html.ValidationMessageFor(model => model.Event_Location, "", new { @class = "text-danger" })
+            </div>
+
+            @Html.LabelFor(model => model.Event_StartDate, htmlAttributes: new { @class = "control-label col-sm-6" })
+            <div class="col-sm-6 form-group">
+                @Html.EditorFor(model => model.Event_StartDate, new { htmlAttributes = new { @class = "form-control datetime-picker", @type = "text" } })
+                @Html.ValidationMessageFor(model => model.Event_StartDate, "", new { @class = "text-danger" })
+            </div>
+
+            @Html.LabelFor(model => model.Event_EndDate, htmlAttributes: new { @class = "control-label col-sm-6" })
+            <div class="col-sm-6 form-group">
+                @Html.EditorFor(model => model.Event_EndDate, new { htmlAttributes = new { @class = "form-control datetime-picker", @type = "text" } })
+                @Html.ValidationMessageFor(model => model.Event_EndDate, "", new { @class = "text-danger" })
+            </div>
+
+            @Html.LabelFor(model => model.Event_Description, htmlAttributes: new { @class = "control-label col-sm-6" })
+            <div class="col-sm-6 form-group">
+                @Html.EditorFor(model => model.Event_Description, new { htmlAttributes = new { @class = "form-control", placeholder = "Please enter Event Description * " } })
+                @Html.ValidationMessageFor(model => model.Event_Description, "", new { @class = "text-danger" })
+            </div>
+
+            @Html.LabelFor(model => model.Price_Adult, htmlAttributes: new { @class = "control-label col-sm-6" })
+            <div class="col-sm-6 form-group">
+                @Html.EditorFor(model => model.Price_Adult, new { htmlAttributes = new { @class = "form-control", placeholder = "Please enter adult ticket price * " } })
+                @Html.ValidationMessageFor(model => model.Price_Adult, "", new { @class = "text-danger" })
+            </div>
+
+            @Html.LabelFor(model => model.Price_Child, htmlAttributes: new { @class = "control-label col-sm-6" })
+            <div class="col-sm-6 form-group">
+                @Html.EditorFor(model => model.Price_Child, new { htmlAttributes = new { @class = "form-control", placeholder = "Please enter child ticket price * " } })
+                @Html.ValidationMessageFor(model => model.Price_Child, "", new { @class = "text-danger" })
+            </div>
+
+            @Html.LabelFor(model => model.Fees_Membership, htmlAttributes: new { @class = "control-label col-sm-6" })
+            <div class="col-sm-6 form-group">
+                @Html.EditorFor(model => model.Fees_Membership, new { htmlAttributes = new { @class = "form-control"} })
+                @Html.ValidationMessageFor(model => model.Fees_Membership, "", new { @class = "text-danger" })
+            </div>
+
+        </div>
+
+            <div class="row">
+                <div class="col-sm-12 form-group">
+                    <input type="submit" class="btn btn-success pull-right" value="Add Event">
+                </div>
+            </div>
+        </div>
+}
+
+<script>
+    $("#successDiv").empty();
+    function SuccessInAddEvent(data) {
+        if (data) {
+            $("#successDiv").addClass('alert alert-success');
+            $("#successDiv").append('<strong>Success!!! Event Added.</strong>');
+            $("#AddEventForm").trigger("reset");
+
+        }
+        else {
+            $("#successDiv").addClass('alert alert-danger');
+            $("#successDiv").append('<strong>Oops! Something went wrong.</strong>');
+        }
+    }
+</script>
+

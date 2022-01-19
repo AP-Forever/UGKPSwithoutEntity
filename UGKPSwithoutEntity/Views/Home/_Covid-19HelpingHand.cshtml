@@ -1,0 +1,61 @@
+﻿<div class="modal show" id="ModalForCovid_19Donation" role="dialog">
+    <br />
+    <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" onclick="AcknowledgeCovid_19Donation()">&times;</button>
+                <h2 style="text-transform: uppercase;" id="ModalTitle">Offer Helping Hand To Fight COVID-19</h2>
+            </div>
+            <div class="modal-body">
+                In just a few short months, COVID-19 has grown into a global pandemic. Healthcare systems are overwhelmed and many people are struggling as social distancing and the economic impact takes a toll. Those who CAN afford to aid in fighting this pandemic must. It is our moral responsibility to offer anything and everything we can help in this crisis. Below you can find list of websites that accept donations for their programs to help those in need. Together, let us offer a Helping Hand to fight COVID-19 pandemic.<br /><br />
+
+                <ul class="list-group row">
+                    <li class="list-group-item col-md-6" style="border: none">
+                        <a href="https://www.bapscharities.org/covid19-canada/" target="_blank" class="btn btn-success" role="button">BAPS Charities</a>
+                    </li>
+                    <li class="list-group-item col-md-6" style="border: none">
+                        <a href="https://cfccanada.ca/en/Good-Food-Access-Fund" target="_blank" class="btn btn-info" role="button">Community Food Centres</a>
+                    </li>
+                </ul>
+
+                <ul class="list-group row">
+                    <li class="list-group-item col-md-6" style="border: none">
+                        <a href="https://secondharvest.ca/donate-fund/" target="_blank" class="btn btn-warning" role="button">Second Harvest</a>
+                    </li>
+                    <li class="list-group-item col-md-6" style="border: none">
+                        <a href="https://www.dailybread.ca/" target="_blank" class="btn btn-success" role="button">Daily Bread</a>
+                    </li>
+                </ul>
+
+                <ul class="list-group row">
+                    <li class="list-group-item col-md-6" style="border: none">
+                        <a href="http://buildingroots.ca/donate/" target="_blank" class="btn btn-info" role="button">Building Roots</a>
+                    </li>
+                    <li class="list-group-item col-md-6" style="border: none">
+                        <a href="https://www.canadahelps.org/en/donate-to-coronavirus-outbreak-response/" target="_blank" class="btn btn-warning" role="button">Canada Helps</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" onclick="AcknowledgeCovid_19Donation()">Continue</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function AcknowledgeCovid_19Donation() {
+        var url = "/Home/AcknowledgeCovid_19HelpingHand";
+        $.ajax({
+            type: "GET",
+            url: url,
+            success: function (data) {
+                $("#ModalForCovid_19Donation").removeClass("show");
+            }
+        })
+
+    }
+</script>
+
+
+

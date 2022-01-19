@@ -1,0 +1,162 @@
+﻿@model UGKPSwithoutEntity.Models.ContactUs
+
+@*<div class="container-fluid">
+
+    
+    <table class="table table-bordered table-striped table-responsive table-hover">
+        <tr>
+            <th></th>
+            <th>Name</th>
+            <th>Member?</th>
+            <th>Email ID</th>
+            <th>Message</th>
+
+        </tr>
+        @for (int i = 0; i < Model.Count; i++)
+        {
+            using (Ajax.BeginForm("ReplyToInquiry", "Home", new AjaxOptions() { HttpMethod = "POST", OnSuccess = "SuccessInReplyingToInquiry" }, new { @id = "ReplyToInquiryForm" }))
+            {
+                @Html.AntiForgeryToken()
+                <tr class="row_@Model[i].InquiryID">
+                    <td>
+                        <span class="glyphicon glyphicon-plus inquiry" style="color:blue" data-toggle="collapse" onclick="ShowReplyForm(@Model[i].InquiryID)" href="#InquiryReplyFormRow_@Model[i].InquiryID" id="#Inquiryglyphiconplusminus_@Model[i].InquiryID"></span>
+                    </td>
+                    <td>
+                        @Html.HiddenFor(x => x[i].InquiryID)
+                        @Html.HiddenFor(x => x[i].FirstName) @Html.DisplayFor(model => model[i].FirstName)
+                        @Html.HiddenFor(x => x[i].LastName) @Html.DisplayFor(model => model[i].LastName)<br /><br />
+                    </td>
+                    <td>
+                        @if (Model[i].IsMember)
+                        {
+                            <div>Yes</div>
+                        }
+                        else
+                        {
+                            <div>No</div>
+                        }
+                    </td>
+                    <td>@Html.HiddenFor(x => x[i].EmailID)  @Html.DisplayFor(model => model[i].EmailID) </td>
+                    <td>
+                        @Html.HiddenFor(x => x[i].Message) <pre>@Html.DisplayFor(model => model[i].Message) </pre>
+                    </td>
+                </tr>
+                <tr class="collapse" id="InquiryReplyFormRow_@Model[i].InquiryID">
+                    <td></td>
+                    <td class="text-center"><strong>Reply: </strong></td>
+                    <td colspan="2">
+                        @Html.ValidationMessageFor(model => model[i].ReplyMessage, "", new { @class = "text-danger" })
+                        @Html.TextAreaFor(model => model[i].ReplyMessage, new { @class = "form-control", @placeholder = "Type reply message here." })
+                    </td>
+                    <td>
+                        <div class="form-group">
+
+                            <input type="submit" value="Send" class="btn btn-primary pull-left" />
+
+                        </div>
+                    </td>
+                </tr>
+            }
+        }
+    </table>
+        
+    
+
+</div>*@
+
+
+@using (Ajax.BeginForm("ReplyToInquiry", "Home", new AjaxOptions() { HttpMethod = "POST", OnSuccess = "SuccessInReplyingToInquiry" }, new { @id = "ReplyToInquiryForm" }))
+{
+    @Html.AntiForgeryToken()
+    <tbody>
+        <tr class="row_@Model.InquiryID">
+
+            <td id="FirstInquiryColumn_@Model.InquiryID">
+                @if (!Model.DidReply)
+                {
+                    <span class="glyphicon glyphicon-plus inquiry" style="color:blue" data-toggle="collapse" onclick="ShowReplyForm(@Model.InquiryID)" href="#InquiryReplyFormRow_@Model.InquiryID" id="#Inquiryglyphiconplusminus_@Model.InquiryID"></span>
+                }
+                else
+                {
+                    <span>Replied</span>
+                }
+            </td>
+
+            <td>
+                @Html.HiddenFor(x => x.InquiryID)
+                @Html.HiddenFor(x => x.FirstName) @Html.DisplayFor(model => model.FirstName)
+                @Html.HiddenFor(x => x.LastName) @Html.DisplayFor(model => model.LastName)<br /><br />
+            </td>
+            <td>
+                @if (Model.IsMember)
+                {
+                    <div>Yes</div>
+                }
+                else
+                {
+                    <div>No</div>
+                }
+            </td>
+            <td>@Html.HiddenFor(x => x.EmailID)  @Html.DisplayFor(model => model.EmailID) </td>
+            <td>@Html.HiddenFor(x => x.ContactNumber)  @Html.DisplayFor(model => model.ContactNumber) </td>
+            <td>
+                @Html.HiddenFor(x => x.Message) <pre>@Html.DisplayFor(model => model.Message) </pre>
+            </td>
+        </tr>
+    </tbody>
+    if (!Model.DidReply)
+    {
+        <tr class="collapse" id="InquiryReplyFormRow_@Model.InquiryID">
+            <td></td>
+            <td class="text-center"><strong>Reply: </strong></td>
+            <td colspan="2">
+                @Html.ValidationMessageFor(model => model.ReplyMessage, "", new { @class = "text-danger" })
+                @Html.TextAreaFor(model => model.ReplyMessage, new { @class = "form-control", @placeholder = "Type reply message here.",
+               data_val = "true", data_val_required = "Reply Message is required.", required = "required" })
+            </td>
+            <td>
+                <div class="form-group">
+
+                    <input type="submit" value="Send" class="btn btn-primary pull-left" />
+
+                </div>
+            </td>
+        </tr>
+    }
+}
+
+<script>
+
+    
+    function ShowReplyForm(InquiryID) {
+        var display = $("#InquiryReplyFormRow_" + InquiryID).css("display");
+        var icon = document.getElementById("#Inquiryglyphiconplusminus_" + InquiryID);
+        var allElementIcon = document.getElementsByClassName("glyphicon glyphicon-minus inquiry");
+
+        for (i = 0; i < allElementIcon.length; i++) {
+            allElementIcon[i].className = "glyphicon glyphicon-plus inquiry";
+        }
+
+        $("[id ^= InquiryReplyFormRow_]").hide();
+
+        if (display == "none") {
+            $("#InquiryReplyFormRow_" + InquiryID).show();
+            icon.className = "glyphicon glyphicon-minus inquiry";
+        } else {
+            $("[id^=InquiryReplyFormRow_]").hide();
+        }
+
+    }
+
+    $("#successDiv").empty();
+    function SuccessInReplyingToInquiry(data) {
+        if (data.success) {
+            $("#successDiv").addClass('alert alert-success');
+            $("#successDiv").append('<strong>Success!!! Reply to inquiry done.</strong>');
+            $("#ReplyToInquiryForm").trigger("reset");
+            $("#InquiryReplyFormRow_" + data.InquiryID).remove();
+            $("#FirstInquiryColumn_" + data.InquiryID).empty();
+            $("#FirstInquiryColumn_" + data.InquiryID).append("Replied");
+        }
+    }
+</script>

@@ -1,0 +1,35 @@
+﻿
+@model UGKPSwithoutEntity.Models.EventSelectionModel
+
+@using (Ajax.BeginForm("ActivateEvent", "Home", new AjaxOptions() { HttpMethod = "POST", OnSuccess = "SuccessInActivateEvent" }, new { @id = "PushEventForm" }))
+{
+    @Html.AntiForgeryToken()
+    <span>*To Deactivate all events, choose <i>None</i>.</span><br/><br/>
+    <div class="col-sm-7">
+        <div class="row">
+            @Html.LabelFor(model => model.SelectedEventID, htmlAttributes: new { @class = "control-label col-sm-6" })
+            <div class="col-sm-6 form-group">
+                @Html.DropDownListFor(model => model.SelectedEventID, ViewData["ListOfEvents"] as SelectList, "--Select Event--", new { @class = "form-control", @id = "ActivateEventDropdown" })
+                @Html.ValidationMessageFor(model => model.SelectedEventID, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-12 form-group">
+                <input type="submit" class="btn btn-primary pull-right" value="Activate Event">
+            </div>
+        </div>
+    </div>
+}
+
+<script>
+    $("#successDiv").empty();
+    function SuccessInActivateEvent(data) {
+        if (data) {
+            $("#successDiv").addClass('alert alert-success');
+            $("#successDiv").append('<strong>Success!!! Event activated.</strong>');
+            $("#PushEventForm").trigger("reset");
+
+        }
+    }
+</script>

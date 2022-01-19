@@ -1,0 +1,301 @@
+﻿@using UGKPSwithoutEntity.Models;
+@using PagedList;
+@using PagedList.Mvc;
+@model  IPagedList<UGKPSwithoutEntity.Models.Transactions>
+
+@{
+    TempData.Keep();
+    ViewBag.Title = "Transactions";
+    GeneralFunctions functions = new GeneralFunctions();
+    if (Session["UserID"] != null)
+    {
+        InvestmentAccess userInvestmentAccessDetails = functions.GetUsersInvestmentAccessDetails((int)Session["UserID"]);
+        if ((userInvestmentAccessDetails.HasAcceptedDisclaimer) || (Session["IsAdmin"] != null) && ((bool)Session["IsAdmin"]))
+        {
+            <div class="container-fluid">
+                @if (ViewBag.Message != null)
+                {
+                    <div class="alert alert-success">
+                        @ViewBag.Message
+                    </div>
+                }
+                <h3>Transactions:</h3><br />
+
+                @if ((Session["IsAdmin"] != null) && (bool)Session["IsAdmin"])
+                {
+                    <button data-button="AddTransaction" type="submit" value="Add Transaction" class="pull-left btn btn-lg btn-success" onclick="AddNewStockTransaction(0)" data-toggle="modal">
+                        Add Stock Transaction
+                    </button>
+                    <button data-button="ShowHoldings" type="submit" value="Show Holdings" class="pull-right btn btn-lg btn-info" onclick="location.href='@Url.Action("Holdings", "Investments")'">
+                        Holdings Report
+                    </button>
+                }
+                <div class="modal fade" id="ModalForAddStockTransaction" role="dialog">
+                    <br />
+                    @Html.Partial("_AddTransaction", new Transaction());
+                </div>
+                <div class="modal fade" id="ModalForSellStockTransaction" role="dialog">
+                    <br />
+                    @Html.Partial("_SellTransaction", new Transaction());
+                </div>
+                <br />
+                <br />
+                <br />
+
+                @Html.AntiForgeryToken()
+                <div class="table-responsive">
+                    <table id="StockTransactionsTable" class="table table-bordered table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>
+                                    @if (ViewBag.SortByParameter != null && ViewBag.SortByParameter.ToString() == "Ticker")
+                                    {
+                                        @Html.ActionLink("Stock", "Transactions", new { sortBy = "TickerDesc" });
+                                    }
+                                    else
+                                    {
+                                        @Html.ActionLink("Symbol", "Transactions", new { sortBy = "Ticker" });
+                                    }
+                                </th>
+                                <th>
+                                    @if (ViewBag.SortByParameter != null && ViewBag.SortByParameter.ToString() == "Exchange")
+                                    {
+                                        @Html.ActionLink("Exchange", "Transactions", new { sortBy = "ExchangeDesc" });
+                                    }
+                                    else
+                                    {
+                                        @Html.ActionLink("Exchange", "Transactions", new { sortBy = "Exchange" });
+                                    }
+                                </th>
+                                <th>
+                                    @if (ViewBag.SortByParameter != null && ViewBag.SortByParameter.ToString() == "CompanyName")
+                                    {
+                                        @Html.ActionLink("Company Name", "Transactions", new { sortBy = "CompanyNameDesc" });
+                                    }
+                                    else
+                                    {
+                                        @Html.ActionLink("Company Name", "Transactions", new { sortBy = "CompanyName" });
+                                    }
+                                </th>
+                                <th>
+                                    @if (ViewBag.SortByParameter != null && ViewBag.SortByParameter.ToString() == "AveragePrice")
+                                    {
+                                        @Html.ActionLink("Average Price", "Transactions", new { sortBy = "AveragePriceDesc" });
+                                    }
+                                    else
+                                    {
+                                        @Html.ActionLink("Average Price", "Transactions", new { sortBy = "AveragePrice" });
+                                    }
+                                </th>
+                                <th>
+                                    @if (ViewBag.SortByParameter != null && ViewBag.SortByParameter.ToString() == "TotalQuantity")
+                                    {
+                                        @Html.ActionLink("Total Quantity", "Transactions", new { sortBy = "TotalQuantityDesc" });
+                                    }
+                                    else
+                                    {
+                                        @Html.ActionLink("Total Quantity", "Transactions", new { sortBy = "TotalQuantity" });
+                                    }
+                                </th>
+                                <th>
+                                    @if (ViewBag.SortByParameter != null && ViewBag.SortByParameter.ToString() == "ChangeInPercentage")
+                                    {
+                                        @Html.ActionLink("% Change", "Transactions", new { sortBy = "ChangeInPercentageDesc" });
+                                    }
+                                    else
+                                    {
+                                        @Html.ActionLink("% Change", "Transactions", new { sortBy = "ChangeInPercentage" });
+                                    }
+                                </th>
+                                <th>
+                                    @if (ViewBag.SortByParameter != null && ViewBag.SortByParameter.ToString() == "ChangeInCurrency")
+                                    {
+                                        @Html.ActionLink("$ Change", "Transactions", new { sortBy = "ChangeInCurrencyDesc" });
+                                    }
+                                    else
+                                    {
+                                        @Html.ActionLink("$ Change", "Transactions", new { sortBy = "ChangeInCurrency" });
+                                    }
+                                </th>
+                                <th>
+                                    @if (ViewBag.SortByParameter != null && ViewBag.SortByParameter.ToString() == "TotalPrice")
+                                    {
+                                        @Html.ActionLink("Total Price", "Transactions", new { sortBy = "TotalPriceDesc" });
+                                    }
+                                    else
+                                    {
+                                        @Html.ActionLink("Total Price", "Transactions", new { sortBy = "TotalPrice" });
+                                    }
+                                </th>
+
+                            </tr>
+                        </thead>
+                        @for (int i = 0; i < Model.Count; i++)
+                        {
+                            <tbody>
+                                @Html.HiddenFor(model => model[i].Stock_Transaction_ID, new { @id = "Stock_Transaction_ID" })
+                                <tr class="row_@Model[i].Stock_Transaction_ID">
+                                    <td>
+                                        @if (Model[i].transactions.Count > 1)
+                                        {
+                                            <span class="glyphicon glyphicon-plus" style="color:blue" data-toggle="collapse" onclick="ShowAllTransactionsForThisStock(@Model[i].transactions[0].Stock_Transaction_ID)" href="#TransactionsRow_@Model[i].transactions[0].Stock_Transaction_ID" id="#glyphiconplusminus_@Model[i].transactions[0].Stock_Transaction_ID"></span>
+                                        }
+                                    </td>
+                                    <td>@Html.DisplayFor(model => model[i].Ticker)</td>
+                                    <td>@Html.DisplayFor(model => model[i].Exchange)</td>
+                                    <td>@Html.DisplayFor(model => model[i].CompanyName)</td>
+                                    <td>@Html.DisplayFor(model => model[i].AveragePrice)</td>
+                                    <td>@Html.DisplayFor(model => model[i].TotalQuantity)</td>
+                                    <td>@Html.DisplayFor(model => model[i].ChangeInPercentage)</td>
+                                    <td>@Html.DisplayFor(model => model[i].ChangeInCurrency)</td>
+                                    <td>@Html.DisplayFor(model => model[i].TotalPrice)</td>
+                                    @if (Model[i].transactions.Count <= 1)
+                                    {
+                                        <td><a href='#' class='btn btn-danger' onclick='DeleteTransactionRecord(@Model[i].transactions[0].Stock_Transaction_ID)'><span class='glyphicon glyphicon-trash'></span></a></td>
+                                        if (Model[i].UserID == Convert.ToInt32(System.Web.HttpContext.Current.Session["UserID"]))
+                                        {
+                                            <td><a href='#' class='btn btn-warning' onclick='Sell(@Model[i].transactions[0].Stock_Transaction_ID)'>Sell</a></td>
+                                        }
+                                    }
+
+                                </tr>
+                            </tbody>
+                            if (Model[i].transactions.Count > 1)
+                            {
+                                Stock currStock = functions.GetStockDetailsByTicker(Model[i].Ticker, Model[i].Exchange);
+                                <tr class="collapse" id="TransactionsRow_@Model[i].transactions[0].Stock_Transaction_ID">
+                                    <td colspan="9" class="text-center lead" style="background-color:lightblue">
+                                        Transactions <br />
+                                        <table class="table table-sm table-striped table-condensed">
+                                            <tr style="font-size: 85%">
+                                                <th class="text-center">Date</th>
+                                                <th class="text-center">Price</th>
+                                                <th class="text-center">Quantity</th>
+                                                <th class="text-center">% Change</th>
+                                                <th class="text-center">$ Change</th>
+                                                <th class="text-center">Total Price</th>
+                                            </tr>
+                                            @for (int j = 0; j < Model[i].transactions.Count; j++)
+                                            {
+                                                var ChangeInPercentage = (currStock.Price - Model[i].transactions[j].Price) / Model[i].transactions[j].Price;
+                                                var ChangeInCurrency = (currStock.Price - Model[i].transactions[j].Price);
+                                                var total = Model[i].transactions[j].Price * Model[i].transactions[j].Quantity;
+                                                <tr style="font-size: 70%">
+                                                    <td>@Model[i].transactions[j].LastUpdated.ToString("dd-MM-yyyy")</td>
+                                                    <td>@Html.DisplayFor(model => Model[i].transactions[j].Price)</td>
+                                                    <td>@Html.DisplayFor(model => Model[i].transactions[j].Quantity)</td>
+                                                    <td>@Math.Round(ChangeInPercentage, 2)</td>
+                                                    <td>@Math.Round(ChangeInCurrency, 2)</td>
+                                                    <td>@total</td>
+                                                    <td><a href='#' class='btn btn-danger' onclick='DeleteTransactionRecord(@Model[i].transactions[j].Stock_Transaction_ID)'><span class='glyphicon glyphicon-trash'></span></a></td>
+                                                    @if (Model[i].UserID == Convert.ToInt32(System.Web.HttpContext.Current.Session["UserID"]))
+                                                    {
+                                                        <td><a href='#' class='btn btn-warning' onclick='Sell(@Model[i].transactions[j].Stock_Transaction_ID)'>Sell</a></td>
+                                                    }
+                                                </tr>
+
+                                            }
+                                        </table>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </table>
+                </div>
+                <div class="table-responsive">
+                    <table id="StocksPagNumbersTable" class="table table-bordered table-striped table-hover">
+                        @Html.PagedListPager(Model, page => Url.Action("Transactions", new { page, sortBy = ViewBag.SortByParameter }))
+                    </table>
+                </div>
+
+                <div class="modal fade" id="ModalForDeleteTransactionRecordConfirmation" role="dialog">
+                    <br />
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button class="close" data-dismiss="modal">&times;</button>
+                                <h4 id="ModalTitle">Remove Transcation</h4>
+                            </div>
+                            <div class="modal-body">
+                                <h4>Are You Sure You Want To Remove This Transaction?</h4>
+                            </div>
+                            <div class="modal-footer">
+                                <button class="btn btn-primary" data-dismiss="modal">Cancel</button>
+                                <button class="btn btn-danger" onclick="ModalForDeleteTransactionRecordConfirmed()">Confirm</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        }
+    }
+}
+
+
+<script>
+    function AddNewStockTransaction(StockTransactionID) {
+        $("#ModalTitle").html("Add New Stock Transaction");
+        $("#StockTransactionID").val(StockTransactionID);
+        $("#ModalForAddStockTransaction").modal();
+        $("#AddStockTransactionForm")[0].reset();
+    }
+
+    function Sell(StockTransactionID) {
+        var url = "/Investments/GetStockTransactionByID?Stock_Transaction_ID=" + StockTransactionID;
+        $("#ModalForSellStockTransaction").modal();
+        $.ajax({
+            type: "GET",
+            url: url,
+            success: function (data) {
+                var obj = JSON.parse(data);
+                $("#SellStockTransactionID").val(0 - parseInt(obj.Stock_Transaction_ID));
+                $("#SellStockTransactionUserID").val(obj.UserID);
+                $("#SellStock_Exchange").val(obj.Exchange);
+                $("#SellStock_CompanyName").val(obj.CompanyName);
+                $("#SellStock_Ticker").val(obj.Ticker);
+                $("#SellStock_Ticker").attr('readonly', true);
+            }
+        })
+    }
+
+    function ShowAllTransactionsForThisStock(Stock_Transaction_ID) {
+        var display = $("#TransactionsRow_" + Stock_Transaction_ID).css("display");
+        var icon = document.getElementById("#glyphiconplusminus_" + Stock_Transaction_ID);
+        var allElementIcon = document.getElementsByClassName("glyphicon glyphicon-minus");
+
+        for (i = 0; i < allElementIcon.length; i++) {
+            allElementIcon[i].className = "glyphicon glyphicon-plus";
+        }
+
+        $("[id ^= TransactionsRow_]").hide();
+
+        if (display == "none") {
+            $("#TransactionsRow_" + Stock_Transaction_ID).show();
+            icon.className = "glyphicon glyphicon-minus";
+        } else {
+            $("[id^=TransactionsRow_]").hide();
+        }
+
+    }
+
+    function DeleteTransactionRecord(Stock_Transaction_ID) {
+        $("#Stock_Transaction_ID").val(Stock_Transaction_ID);
+        $("#ModalForDeleteTransactionRecordConfirmation").modal();
+    }
+
+    function ModalForDeleteTransactionRecordConfirmed(){
+        var Stock_Transaction_ID = $("#Stock_Transaction_ID").val();
+        var url = "/Investments/DeleteStockTransactionRecord?Stock_Transaction_ID=" + Stock_Transaction_ID;
+        $.ajax({
+            type: "GET",
+            url: url,
+            success: function (data) {
+                $("#ModalForDeleteTransactionRecordConfirmation").modal("hide");
+                window.location.reload();
+            }
+        })
+    }
+
+</script>

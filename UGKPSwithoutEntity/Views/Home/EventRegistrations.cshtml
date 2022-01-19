@@ -1,0 +1,146 @@
+﻿@using UGKPSwithoutEntity.Models
+@using PagedList;
+@using PagedList.Mvc;
+@model  IPagedList<UGKPSwithoutEntity.Models.WebsiteUser>
+@{
+    ViewBag.Title = "Event Registrations";
+}
+
+
+<div class="container-fluid">
+
+    <h3>Event Registrations:</h3><br />
+
+    <div class="table-responsive">
+        @Html.AntiForgeryToken()
+        <table id="EventRegistrationRecordsTable" class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>
+                        Sort By:
+                        @if (ViewBag.SortByParameter != null && ViewBag.SortByParameter.ToString() == "FirstName")
+                        {
+                            @Html.ActionLink("Name", "EventRegistrations", new { sortBy = "FirstNameDesc" }, new { @style = "font-size: small" });
+                        }
+                        else
+                        {
+                            @Html.ActionLink("Name", "EventRegistrations", new { sortBy = "FirstName" }, new { @style = "font-size: small" });
+                        }
+                        &nbsp;&nbsp;
+                        @if (ViewBag.SortByParameter != null && ViewBag.SortByParameter.ToString() == "EmailID")
+                        {
+                            @Html.ActionLink("EmailID", "EventRegistrations", new { sortBy = "EmailIDDesc" }, new { @style = "font-size: small" });
+                        }
+                        else
+                        {
+                            @Html.ActionLink("EmailID", "EventRegistrations", new { sortBy = "EmailID" }, new { @style = "font-size: small" });
+                        }
+                        &nbsp;&nbsp;
+                        @if (ViewBag.SortByParameter != null && ViewBag.SortByParameter.ToString() == "PhoneNumber")
+                        {
+                            @Html.ActionLink("Contact Number", "EventRegistrations", new { sortBy = "PhoneNumberDesc" }, new { @style = "font-size: small" });
+                        }
+                        else
+                        {
+                            @Html.ActionLink("Contact Number", "EventRegistrations", new { sortBy = "PhoneNumber" }, new { @style = "font-size: small" });
+                        }
+                        &nbsp;&nbsp;
+                        @if (ViewBag.SortByParameter != null && ViewBag.SortByParameter.ToString() == "Native")
+                        {
+                            @Html.ActionLink("Native", "EventRegistrations", new { sortBy = "NativeDesc" }, new { @style = "font-size: small" });
+                        }
+                        else
+                        {
+                            @Html.ActionLink("Native", "EventRegistrations", new { sortBy = "Native" }, new { @style = "font-size: small" });
+                        }
+                    </th>
+                    <th>Full Address</th>
+                    <th>Attending Members</th>
+                    <th>Adults</th>
+                    <th>Kids</th>
+                    <th>Total Due</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            @foreach (WebsiteUser user in Model)
+            {
+                <tbody>
+                    <tr class="row_@user.UserID">
+                        <td>
+                            @Html.HiddenFor(model => user.UserID)
+                            @Html.DisplayFor(model => user.FirstName) @Html.DisplayFor(model => user.LastName) <br />
+                            @Html.DisplayFor(model => user.EmailID) <br />
+                            @Html.DisplayFor(model => user.PhoneNumber) <br />
+                            @Html.DisplayFor(model => user.Native)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(model => user.Address) <br />
+                            @Html.DisplayFor(model => user.City),
+                            @Html.DisplayFor(model => user.State)<br />
+                            @Html.DisplayFor(model => user.Country),
+                            @Html.DisplayFor(model => user.ZipCode)
+                        </td>
+                        <td>
+                            @foreach (UserFamilyMember familyMember in user.FamilyMembers)
+                            {
+
+                                @Html.HiddenFor(model => familyMember.FamilyMemberID)
+                                @Html.DisplayFor(model => familyMember.FirstName)<span>&nbsp;</span>@Html.DisplayFor(model => familyMember.LastName) <br />
+                                <span>Age: </span>@Html.DisplayFor(model => familyMember.Age) <br />
+                                @Html.DisplayFor(model => familyMember.Relation) <br />
+                                <span>Registered On: </span>@familyMember.DateRegistered.ToString("dd-MM-yyyy HH:mm:ss")
+                                <hr />
+                            }
+                        </td>
+                        <td>
+                            @user.NoOfAdults
+                        </td>
+                        <td>
+                            @user.NoOfKids
+                        </td>
+                        <td>
+                            @user.TotalDue
+                        </td>
+                        <td>
+                            <div id="IsEventAttended_@user.UserID">
+                                @if (!user.HasAlreadyAttended)
+                                {
+                                    <input type="submit" value="Mark As Attended" class="btn btn-primary" onclick="MarkUserAsAttendedEvent(@user.UserID)" />
+                                }
+                                else
+                                {
+                                    <span>Attended</span>
+                                }
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            }
+
+        </table>
+        <div class="pull-left">
+                @Html.PagedListPager(Model, page => Url.Action("EventRegistrations", new { page, sortBy = ViewBag.SortByParameter }))
+            </div>
+    </div>
+
+</div>
+
+<script>
+    function MarkUserAsAttendedEvent(UserID) {
+        var url = "/Home/MarkUserAsAttendedEvent?UserID=" + UserID;
+        $.ajax({
+            type: "GET",
+            url: url,
+            success: function (data) {
+                $("#IsEventAttended_" + data.data).empty();
+                $("#IsEventAttended_" + data.data).html('Attended');
+            }
+        })
+    }
+
+
+
+</script>
+
+
+

@@ -1,0 +1,46 @@
+﻿@model UGKPSwithoutEntity.Models.EmailModel
+
+@using (Ajax.BeginForm("SendEmailToMembers", "Home", new AjaxOptions() { HttpMethod = "POST", OnSuccess = "SuccessInSendingEmailToMembers" }, new { @id = "SendEmailToMembersForm" }))
+{
+    @Html.AntiForgeryToken()
+    <div class="col-sm-7">
+        <div class="row">
+            @Html.LabelFor(model => model.SendTo, htmlAttributes: new { @class = "control-label col-sm-6" })
+            <div class="col-sm-6 form-group">
+                @Html.DropDownListFor(model => model.SendTo, ViewData["ListOfEmailRecipients"] as SelectList, "--Select Recipients--", new { @class = "form-control", @id = "SendEmailToRecipients" })
+                @Html.ValidationMessageFor(model => model.SendTo, "", new { @class = "text-danger" })
+            </div>
+
+            @Html.LabelFor(model => model.Subject, htmlAttributes: new { @class = "control-label col-sm-6" })
+            <div class="col-sm-6 form-group">
+                @Html.EditorFor(model => model.Subject, new { htmlAttributes = new { @class = "form-control", placeholder = "Please enter Email Subject * " } })
+                @Html.ValidationMessageFor(model => model.Subject, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="row">
+            @Html.LabelFor(model => model.Body, htmlAttributes: new { @class = "control-label col-sm-6" })
+            <div class="col-sm-6 form-group">
+                @Html.TextAreaFor(model => model.Body, new { @class = "form-control", placeholder = "Please enter Email Message * " })
+                @Html.ValidationMessageFor(model => model.Body, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12 form-group">
+                <input type="submit" class="btn btn-success pull-right" value="Send Email">
+            </div>
+        </div>
+    </div>
+}
+
+<script>
+    $("#successDiv").empty();
+    function SuccessInSendingEmailToMembers(data) {
+        if (data) {
+            $("#successDiv").addClass('alert alert-success');
+            $("#successDiv").append('<strong>Success!!! Email Sent to Members.</strong>');
+            $("#SendEmailToMembersForm").trigger("reset");
+            
+        }
+    }
+</script>

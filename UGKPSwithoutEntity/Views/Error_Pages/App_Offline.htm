@@ -1,0 +1,174 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <!--<meta http-equiv="x-ua-compatible" content="IE=9">-->
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>@ViewBag.Title - UGKPS</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.10/css/all.css" integrity="sha384-+d0P83n9kaQMCwj8F4RJB66tzIwOKmrdb46+porD/OvrJ+37WqIM7UoBtwHO6Nlg" crossorigin="anonymous">
+    <script src="~/Scripts/jquery-1.10.2.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+    <script src="~/Scripts/jquery.validate.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.js"></script>
+    <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
+    <link href="~/Content/MyStyle.css" rel="stylesheet" type="text/css" />
+    <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
+
+    <!-- jQuery UI CSS Reference -->
+    <link href="~/Content/themes/base/jquery-ui.min.css" rel="stylesheet" />
+    <link href="~/Content/jquery-ui-timepicker-addon.min.css" rel="stylesheet" />
+
+    <!-- Required jQuery and jQuery UI Javascript references -->
+    <script src="~/Scripts/jquery-ui-1.12.1.js"></script>
+    <script src="~/Scripts/jquery-ui-1.12.1.min.js"></script>
+
+    <script src="~/Scripts/jquery-ui-timepicker-addon.min.js"></script>
+
+
+
+    <style>
+        @@media (max-width: 1200px) {
+            .navbar-header {
+                float: none;
+            }
+
+            .navbar-left, .navbar-right {
+                float: none !important;
+            }
+
+            .navbar-toggle {
+                display: block;
+            }
+
+            .navbar-collapse {
+                border-top: 1px solid transparent;
+                box-shadow: inset 0 1px 0 rgba(255,255,255,0.1);
+            }
+
+            .navbar-fixed-top {
+                top: 0;
+                border-width: 0 0 1px;
+            }
+
+            .navbar-collapse.collapse {
+                display: none !important;
+            }
+
+            .navbar-nav {
+                float: none !important;
+                margin-top: 7.5px;
+            }
+
+                .navbar-nav > li {
+                    float: none;
+                }
+
+                    .navbar-nav > li > a {
+                        padding-top: 10px;
+                        padding-bottom: 10px;
+                    }
+
+            .collapse.in {
+                display: block !important;
+            }
+        }
+
+        .modal-body {
+            max-height: calc(100vh - 210px);
+            overflow-y: auto;
+        }
+
+        #maintenance-page {
+            width: 100%;
+            min-height: 525px;
+            text-align: center;
+            font: 1em "Open Sans",sans-serif;
+            color: #333;
+            background: #EEF2F5;
+        }
+
+            #maintenance-page h1 {
+                padding: 40px 0 25px;
+                text-align: center;
+                font: bold 2.5em "Open Sans",sans-serif;
+                color: #084D8B;
+                margin: 0;
+            }
+
+            #maintenance-page p {
+                padding: 25px 0px 40px;
+                font-size: 1em;
+            }
+    </style>
+
+
+
+</head>
+<body id="myPage" data-spy="scroll" data-target=".navbar" data-offset="60">
+    <div id="wrap">
+        <nav class="navbar navbar-default navbar-fixed-top navbar-expand-xl">
+            <div class="container">
+
+            </div>
+        </nav>
+
+
+        <div class="body-content">
+            <div id="maintenance-page">
+                <h1 class="nl_open-sans">Planned Maintenance Today</h1>
+                <img src="~/Images/maintenance.png">
+                <p>
+                    We&rsquo;ll be back soon!<br /><br />
+                    This website is temporarily unavailable due to a planned maintenance.
+                    <br />
+                    <br />
+                    Sorry for the inconvenience but we&rsquo;re performing some maintenance at the moment. If you need to you can always <a href="mailto:ugkps.toronto@gmail.com">contact us</a>, otherwise we&rsquo;ll be back online shortly!
+                </p>
+            </div>
+        </div>
+
+    </div>
+
+    <footer class="container-fluid text-center" style="background-color:#f4511e; color:white; padding: 30px 0px 30px">
+
+        <small>
+            This website is for Uttar Gujarat Kadava Patidars.
+            To get Membership, please send Registration request. Committee members reserve the right to Approve or Reject the request.
+        </small>
+
+        <hr style="border: 1px solid rgba(0, 0, 0, 0.1)" />
+
+        <div class="footer-copyright text-center">
+            <ul class="list-inline">
+                <li><p>&copy; @DateTime.Now.Year - UGKPS</p></li>
+                <li>|</li>
+                <li>
+                    <a href="@Url.Action(" TermsAndConditions", "Home" )" style="color:white" target="_blank">Terms & Conditions</a>
+                </li>
+                <li>|</li>
+                <li>
+                    <a href="@Url.Action(" PrivacyPolicy", "Home" )" style="color:white" target="_blank">Privacy Policy</a>
+                </li>
+                <li>|</li>
+                <li>
+                    <a href="@Url.Action(" CookiesPolicy", "Home" )" style="color:white" target="_blank">Cookies Policy</a>
+                </li>
+                <li class="pull-right">
+                    <small class="pull-right">Powered By Amit Patel.</small>
+                </li>
+            </ul>
+
+        </div>
+
+    </footer>
+</body>
+
+</html>
+
+
+
+

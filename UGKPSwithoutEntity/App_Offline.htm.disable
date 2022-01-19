@@ -1,0 +1,70 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <!--<meta http-equiv="x-ua-compatible" content="IE=9">-->
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>UGKPS</title>
+
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+
+
+
+
+    <style>
+
+        html, body {
+            height: 100%;
+            margin: 0px;
+            position:relative;
+        }
+        #maintenance-page {
+            width: 100%;
+            height: inherit;
+            text-align: center;
+            font: 1em "Open Sans",sans-serif;
+            color: #333;
+            background: #EEF2F5;
+            margin: auto;
+            position: absolute; /* 2 */
+            top: 50%; /* 3 */
+            transform: translate(0, -50%)
+        }
+        }
+
+        #maintenance-page h1 {
+            padding: 40px 0 25px;
+            text-align: center;
+            font: bold 2.5em "Open Sans",sans-serif;
+            color: #084D8B;
+            margin: 0;
+        }
+
+        #maintenance-page p {
+            padding: 25px 0px 40px;
+            font-size: 1em;
+        }
+    </style>
+
+
+
+</head>
+<body >
+    <div id="maintenance-page">
+        <h1 class="nl_open-sans">Planned Maintenance Today</h1>
+        <img src="https://myprovidence.healthtrioconnect.com/asset/maintenance.png">
+        <p>
+            We&rsquo;ll be back soon!<br /><br />
+            This website is temporarily unavailable due to a planned maintenance.
+            <br />
+            <br />
+            Sorry for the inconvenience but we&rsquo;re performing some maintenance at the moment. If you need to you can always <a href="mailto:ugkps.toronto@gmail.com">contact us</a>, otherwise we&rsquo;ll be back online shortly!
+        </p>
+    </div>
+</body>
+
+</html>
+
+
+
+

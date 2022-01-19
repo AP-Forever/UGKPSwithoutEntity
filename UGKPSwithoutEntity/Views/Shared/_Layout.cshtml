@@ -1,0 +1,285 @@
+﻿@using UGKPSwithoutEntity.Models;
+<!DOCTYPE html>
+<html>
+<head>
+    @*<meta http-equiv="x-ua-compatible" content="IE=9">*@
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>@ViewBag.Title - UGKPS</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    
+
+
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.10/css/all.css" integrity="sha384-+d0P83n9kaQMCwj8F4RJB66tzIwOKmrdb46+porD/OvrJ+37WqIM7UoBtwHO6Nlg" crossorigin="anonymous">
+    <script src="~/Scripts/jquery-1.10.2.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+    <script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+    @*<script src="~/Scripts/jquery.unobtrusive-ajax.js"></script>*@
+
+    <script src="~/Scripts/jquery.validate.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.js"></script>
+    <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
+
+    <link href="~/Content/MyStyle.css" rel="stylesheet" type="text/css" />
+    <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
+    <!-- jQuery UI CSS Reference -->
+    <link href="~/Content/themes/base/jquery-ui.min.css" rel="stylesheet" />
+    <link href="~/Content/jquery-ui-timepicker-addon.min.css" rel="stylesheet" />
+    <!-- Required jQuery and jQuery UI Javascript references -->
+    <script src="~/Scripts/jquery-ui-1.12.1.js"></script>
+    <script src="~/Scripts/jquery-ui-1.12.1.min.js"></script>
+
+    <script src="~/Scripts/jquery-ui-timepicker-addon.min.js"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('.datetime-picker').datetimepicker({
+                changeMonth: true,
+                changeYear: true,
+                controlType: 'select',
+                timeFormat: 'hh:mm TT',
+                yearRange: '-100:+0'
+            });
+            $('.date-picker').datepicker({
+                changeMonth: true,
+                changeYear: true,
+                controlType: 'select',
+                yearRange: '-100:+0'
+            });
+
+        });
+    </script>
+
+    <style>
+
+        .slidecontainer {
+            width: 100%;
+        }
+
+        .slider {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 5px;
+            border-radius: 5px;
+            background: #d3d3d3;
+            outline: none;
+            opacity: 0.7;
+            -webkit-transition: .2s;
+            transition: opacity .2s;
+        }
+
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: green;
+            cursor: default;
+        }
+
+        .slider::-moz-range-thumb {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: green;
+            cursor: default;
+        }
+
+        .dropdown:hover .dropdown-menu {
+            display: block !important;
+        }
+
+
+        @@media (max-width: 1200px) {
+            .navbar-header {
+                float: none;
+            }
+
+            .navbar-left, .navbar-right {
+                float: none !important;
+            }
+
+            .navbar-toggle {
+                display: block;
+            }
+
+            .navbar-collapse {
+                border-top: 1px solid transparent;
+                box-shadow: inset 0 1px 0 rgba(255,255,255,0.1);
+            }
+
+            .navbar-fixed-top {
+                top: 0;
+                border-width: 0 0 1px;
+            }
+
+            .navbar-collapse.collapse {
+                display: none !important;
+            }
+
+            .navbar-nav {
+                float: none !important;
+                margin-top: 7.5px;
+            }
+
+                .navbar-nav > li {
+                    float: none;
+                }
+
+                    .navbar-nav > li > a {
+                        padding-top: 10px;
+                        padding-bottom: 10px;
+                    }
+
+            .collapse.in {
+                display: block !important;
+            }
+        }
+
+        .modal-body {
+            max-height: calc(100vh - 210px);
+            overflow-y: auto;
+        }
+    </style>
+
+
+
+</head>
+<body id="myPage" data-spy="scroll" data-target=".navbar" data-offset="60">
+    <div id="wrap">
+        <nav class="navbar navbar-default navbar-fixed-top navbar-expand-xl">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    @Html.ActionLink(" ", "Index", "Home", new { area = "" }, new { @class = "navbar-brand", title = "Uttar Gujarat Kadva Patidar Samaaj", @style = "background:url(../Images/Logo.png) no-repeat center center; background-size: contain" })
+                </div>
+                <div id="myNavbar" class="collapse navbar-collapse" style="max-height:none !important; font-family:'Times New Roman', Times, serif">
+                    <ul class="nav navbar-nav navbar-left">
+                        <li>@Html.ActionLink("Events", "Events", "Home")</li>
+                        @if ((Session["IsAdmin"] != null) && ((bool)Session["IsAdmin"]))
+                        {
+                            <li>@Html.ActionLink("Users", "Users", "Home")</li>
+                            <li>@Html.ActionLink("Event Registrations", "EventRegistrations", "Home")</li>
+                            <li class="dropdown">
+                                <a href="@Url.Action("Stocks", "Investments")" class="dropdown-toggle">
+                                    Invest
+                                </a>
+                                <ul class="dropdown-menu" style="left:0;">
+                                    <li>@Html.ActionLink("Transactions", "Transactions", "Investments")</li>
+                                </ul>
+                            </li>
+                        }
+                        else
+                        {
+
+                            GeneralFunctions functions = new GeneralFunctions();
+                            if (Session["UserID"] != null)
+                            {
+                                InvestmentAccess userInvestmentAccessDetails = functions.GetUsersInvestmentAccessDetails((int)Session["UserID"]);
+                                if (userInvestmentAccessDetails.IsInvestTabVisible)
+                                {
+                                    <li>@Html.ActionLink("Invest", "Stocks", "Investments")</li>
+                                }
+                            }
+                        }
+
+
+                    </ul>
+                    <ul class="nav navbar-nav navbar-right">
+                        <li><a href="/Home/Index#about">About</a></li>
+                        <li><a href="/Home/Index#contact">Contact</a></li>
+                        <li>@Html.ActionLink("Committee Members", "CommitteeMembers", "Home")</li>
+                        @if ((Session["IsAdmin"] != null) && ((bool)Session["IsAdmin"]))
+                        {
+                            <li>@Html.ActionLink("Admin Area", "AdminArea", "Home")</li>
+                        }
+
+                        @if (Session["UserID"] != null)
+                        {
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                    @Session["FirstName"]
+                                    <span class="caret"></span>
+                                </a>
+                                <ul class="dropdown-menu" style="left:0;">
+                                    <li>@Html.ActionLink("Profile", "UserProfile", "Account")</li>
+                                    <li>@Html.ActionLink("Family Members", "FamilyMembers", "Account")</li>
+                                    <li>@Html.ActionLink("Logout", "Logout", "Account")</li>
+                                </ul>
+                            </li>
+                        }
+                        else
+                        {
+                            <li>@Html.ActionLink("Login", "Login", "Account")</li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+
+        <div class="body-content">
+            @RenderBody()
+        </div>
+        <div id="push"></div>
+    </div>
+
+    <footer class="container-fluid text-center" style="background-color:#f4511e; color:white; padding: 30px 0px 30px">
+        <a href="#myPage" title="To Top">
+            <span class="glyphicon glyphicon-chevron-up" style="color: white"></span>
+        </a>
+
+        <ul class="list-unstyled list-inline text-center py-3">
+            <li class="list-inline">
+                <h4>Register for free</h4>
+            </li>
+            <li class="list-inline">
+                <a href="@Url.Action("Registration", "Account")" class="btn btn-lg btn-danger btn-rounded">Sign up!</a>
+            </li>
+        </ul>
+        <small>
+            This website is for Uttar Gujarat Kadava Patidars.
+            To get Membership, please send Registration request. Committee members reserve the right to Approve or Reject the request.
+        </small>
+
+        <hr style="border: 1px solid rgba(0, 0, 0, 0.1)" />
+
+        <div class="footer-copyright text-center">
+            <ul class="list-inline">
+                <li><p>&copy; @DateTime.Now.Year - UGKPS</p></li>
+                <li>|</li>
+                <li>
+                    <a href="@Url.Action("TermsAndConditions", "Home")" style="color:white" target="_blank">Terms & Conditions</a>
+                </li>
+                <li>|</li>
+                <li>
+                    <a href="@Url.Action("PrivacyPolicy", "Home")" style="color:white" target="_blank">Privacy Policy</a>
+                </li>
+                <li>|</li>
+                <li>
+                    <a href="@Url.Action("CookiesPolicy", "Home")" style="color:white" target="_blank">Cookies Policy</a>
+                </li>
+                <li class="pull-right">
+                    <small class="pull-right">Powered By Amit Patel.</small>
+                </li>
+            </ul>
+
+        </div>
+
+    </footer>
+
+
+    
+
+    @RenderSection("Scripts", false)
+</body>
+
+</html>

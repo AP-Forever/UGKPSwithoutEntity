@@ -1,0 +1,372 @@
+﻿@using UGKPSwithoutEntity.Models;
+@using PagedList;
+@using PagedList.Mvc;
+@model  IPagedList<UGKPSwithoutEntity.Models.Stock>
+@{
+    TempData.Keep();
+    ViewBag.Title = "Stocks";
+    GeneralFunctions functions = new GeneralFunctions();
+    if (Session["UserID"] != null)
+    {
+        InvestmentAccess userInvestmentAccessDetails = functions.GetUsersInvestmentAccessDetails((int)Session["UserID"]);
+        if ((userInvestmentAccessDetails.HasAcceptedDisclaimer) || (Session["IsAdmin"] != null) && ((bool)Session["IsAdmin"]))
+        {
+            <div class="container-fluid">
+                @if (ViewBag.Message != null)
+                {
+                    <div class="alert alert-success">
+                        @ViewBag.Message
+                    </div>
+                }
+                @if (TempData["message"] != null)
+                {
+                    <div class="alert alert-info">
+                        @Html.Raw(TempData["message"])
+
+                    </div>
+                }
+                <h3>Stocks:</h3><br />
+
+                @if ((Session["IsAdmin"] != null) && (bool)Session["IsAdmin"])
+                {
+                    @Html.ActionLink("Add New Stock", "AddStock", "Investments", null, new { @class = "btn btn-primary btn-large" })
+                }
+                <button class="btn btn-danger pull-right" onclick="RefreshStocks()">Refresh</button>
+                <br /><br />
+                <span><i><strong>Note: </strong>The information contained on this Website is not intended as, and shall not be understood or construed as, legal advice and is for educational and informational purposes only.</i></span><br /><br />
+
+                @Html.AntiForgeryToken()
+                <div class="table-responsive">
+                    <table id="StocksTable" class="table table-bordered table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>
+                                    @if (ViewBag.SortByParameter != null && ViewBag.SortByParameter.ToString() == "Ticker")
+                                    {
+                                        @Html.ActionLink("Symbol", "Stocks", new { sortBy = "TickerDesc" });
+                                    }
+                                    else
+                                    {
+                                        @Html.ActionLink("Symbol", "Stocks", new { sortBy = "Ticker" });
+                                    }
+                                </th>
+                                <th>
+                                    @if (ViewBag.SortByParameter != null && ViewBag.SortByParameter.ToString() == "Exchange")
+                                    {
+                                        @Html.ActionLink("Exchange", "Stocks", new { sortBy = "ExchangeDesc" });
+                                    }
+                                    else
+                                    {
+                                        @Html.ActionLink("Exchange", "Stocks", new { sortBy = "Exchange" });
+                                    }
+                                </th>
+                                <th>
+                                    @if (ViewBag.SortByParameter != null && ViewBag.SortByParameter.ToString() == "CompanyName")
+                                    {
+                                        @Html.ActionLink("Company Name", "Stocks", new { sortBy = "CompanyNameDesc" });
+                                    }
+                                    else
+                                    {
+                                        @Html.ActionLink("Company Name", "Stocks", new { sortBy = "CompanyName" });
+                                    }
+                                </th>
+                                <th>
+                                    @if (ViewBag.SortByParameter != null && ViewBag.SortByParameter.ToString() == "Price")
+                                    {
+                                        @Html.ActionLink("Price:", "Stocks", new { sortBy = "PriceDesc" });
+                                    }
+                                    else
+                                    {
+                                        @Html.ActionLink("Price:", "Stocks", new { sortBy = "Price" });
+                                    }
+
+                                </th>
+                                <th>
+                                    @if (ViewBag.SortByParameter != null && ViewBag.SortByParameter.ToString() == "P_E_Ratio")
+                                    {
+                                        @Html.ActionLink("P/E Ratio", "Stocks", new { sortBy = "P_E_RatioDesc" });
+                                    }
+                                    else
+                                    {
+                                        @Html.ActionLink("P/E Ratio", "Stocks", new { sortBy = "P_E_Ratio" }); ;
+                                    }
+                                </th>
+                                <th>
+                                    @if (ViewBag.SortByParameter != null && ViewBag.SortByParameter.ToString() == "EPS")
+                                    {
+                                        @Html.ActionLink("EPS", "Stocks", new { sortBy = "EPSDesc" });
+                                    }
+                                    else
+                                    {
+                                        @Html.ActionLink("EPS", "Stocks", new { sortBy = "EPS" });
+                                    }
+
+                                </th>
+                                <th>
+                                    @if (ViewBag.SortByParameter != null && ViewBag.SortByParameter.ToString() == "DividendPerShare")
+                                    {
+                                        @Html.ActionLink("Dividend ($)", "Stocks", new { sortBy = "DividendPerShareDesc" });
+                                    }
+                                    else
+                                    {
+                                        @Html.ActionLink("Dividend ($)", "Stocks", new { sortBy = "DividendPerShare" });
+                                    }
+
+                                </th>
+                                <th>
+                                    @if (ViewBag.SortByParameter != null && ViewBag.SortByParameter.ToString() == "DividendPercent")
+                                    {
+                                        @Html.ActionLink("Dividend (%)", "Stocks", new { sortBy = "DividendPercentDesc" });
+                                    }
+                                    else
+                                    {
+                                        @Html.ActionLink("Dividend (%)", "Stocks", new { sortBy = "DividendPercent" });
+                                    }
+
+                                </th>
+                                <th>
+                                    @if (ViewBag.SortByParameter != null && ViewBag.SortByParameter.ToString() == "DividendYieldPercent")
+                                    {
+                                        @Html.ActionLink("Yield (%)", "Stocks", new { sortBy = "DividendYieldPercentDesc" });
+                                    }
+                                    else
+                                    {
+                                        @Html.ActionLink("Yield (%)", "Stocks", new { sortBy = "DividendYieldPercent" });
+                                    }
+
+                                </th>
+                                <th>Last Updated</th>
+                                <th>
+                                    @if (ViewBag.SortByParameter != null && ViewBag.SortByParameter.ToString() == "Sector")
+                                    {
+                                        @Html.ActionLink("Sector", "Stocks", new { sortBy = "SectorDesc" });
+                                    }
+                                    else
+                                    {
+                                        @Html.ActionLink("Sector", "Stocks", new { sortBy = "Sector" });
+                                    }
+                                </th>
+                                <th>
+                                    <span class="pull-left">Low</span>
+                                    <span class="pull-right">High</span>
+                                </th>
+                                <th>Comment</th>
+                                @*<th></th>
+                                    <th></th>*@
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (int i = 0; i < Model.Count; i++)
+                            {
+
+                                <tr class="row_@Model[i].SI_ID">
+                                    <td>@Html.DisplayFor(model => model[i].Ticker)</td>
+                                    <td>@Html.DisplayFor(model => model[i].Exchange)</td>
+                                    <td>@Html.DisplayFor(model => model[i].CompanyName)</td>
+                                    <td>@Html.DisplayFor(model => model[i].Price)</td>
+                                    <td>@Html.DisplayFor(model => model[i].P_E_Ratio)</td>
+                                    <td>@Html.DisplayFor(model => model[i].EPS)</td>
+                                    <td>@Html.DisplayFor(model => model[i].DividendPerShare)</td>
+                                    <td>@Html.DisplayFor(model => model[i].DividendPercent)</td>
+                                    <td>@Html.DisplayFor(model => model[i].DividendYieldPercent)</td>
+                                    <td>@Model[i].LastUpdated.ToString("dd-MM-yyyy hh:mm")</td>
+                                    <td>@Html.DisplayFor(model => model[i].Sector)</td>
+                                    <td>
+                                        <span class="pull-left" id="Stock_Price_Low_@Model[i].SI_ID" style="font-size: x-small">@Html.DisplayFor(model => model[i].Price_Low)</span>
+                                        <span class="pull-right" id="Stock_Price_High_@Model[i].SI_ID" style="font-size: x-small">@Html.DisplayFor(model => model[i].Price_High)</span>
+                                        <div class="slidecontainer">
+                                            <input type="range" min=@Model[i].Price_Low max=@Model[i].Price_High value=@Model[i].Price step="0.0001" class="slider" id="myRange_@Model[i].SI_ID" disabled="disabled">
+                                        </div><br />
+                                        <div class="text-center">
+                                            <button class="btn btn-info btn-sm align-self-sm-center" id="Btn_Change_Stock_HighLow_DayYear_@Model[i].SI_ID" onclick="ChangeStockHighLow(@Json.Encode(Model[i]))">Show Daily High Low</button>
+                                        </div>
+                                    </td>
+                                    <td>@Html.DisplayFor(model => model[i].Comment)</td>
+                                    @if (Model[i].UserID == Convert.ToInt32(System.Web.HttpContext.Current.Session["UserID"]))
+                                    {
+                                        <td><a href='#' class='btn btn-warning' onclick='EditStockRecord(@Model[i].SI_ID)'><span class="glyphicon glyphicon-edit"></span></a></td>
+                                        <td><a href='#' class='btn btn-danger' onclick='DeleteStockRecord(@Model[i].SI_ID, "@Model[i].Ticker")'><span class="glyphicon glyphicon-trash"></span></a></td>
+                                    }
+
+                                </tr>
+
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                <div class="table-responsive">
+                    <table id="StocksPagNumbersTable" class="table table-bordered table-striped table-hover">
+                        @Html.PagedListPager(Model, page => Url.Action("Stocks", new { page, sortBy = ViewBag.SortByParameter }))
+                    </table>
+                </div>
+                <div class="modal fade" id="ModalForEditStock" role="dialog">
+
+                    <br />
+                    @Html.Partial("_EditStock", new Stock());
+
+                </div>
+
+                <div class="modal fade" id="ModalForDeleteStockConfirmation" role="dialog">
+                    <br />
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button class="close" data-dismiss="modal">&times;</button>
+                                <h4 id="ModalTitle">Remove Stock</h4>
+                            </div>
+                            <div class="modal-body">
+                                <h4 id="ModalStockMessage">Are You Sure You Want To Remove This Stock?</h4>
+                            </div>
+                            <div class="modal-footer">
+                                <button class="btn btn-primary" data-dismiss="modal">Cancel</button>
+                                <button class="btn btn-danger" onclick="DeleteStockRecordConfirmed()">Confirm</button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        }
+        else
+        {
+            if (userInvestmentAccessDetails.IsInvestTabVisible)
+            {
+                <div class="modal show" id="ModalForInvestmentDisclaimer" role="dialog">
+                    <br />
+                    <div class="modal-dialog modal-dialog-scrollable">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button class="close" onclick="DeclinedInvestmentDisclaimer()">&times;</button>
+                                <h2 style="text-transform: uppercase;" id="ModalTitle">Investment Disclaimer</h2>
+                            </div>
+                            <div class="modal-body">
+                                @Html.Partial("_InvestmentDisclaimer")
+                            </div>
+                            <div class="modal-footer">
+                                <button class="btn btn-primary" onclick="DeclinedInvestmentDisclaimer()">No</button>
+                                <button class="btn btn-danger" onclick="AcceptedInvestmentDisclaimer(@Session["UserID"])">Yes</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+            else
+            {
+                Response.Redirect("~/Home/Index");
+            }
+        }
+    }
+}
+
+
+
+
+
+<script>
+    function ChangeStockHighLow(stockObject) {
+        if ($("#Btn_Change_Stock_HighLow_DayYear_" + stockObject.SI_ID).html().includes("Daily")) {
+            $("#Stock_Price_Low_" + stockObject.SI_ID).html("$" + stockObject.Day_Price_Low);
+            $("#Stock_Price_High_" + stockObject.SI_ID).html("$" + stockObject.Day_Price_High);
+
+            $("#Btn_Change_Stock_HighLow_DayYear_" + stockObject.SI_ID).html("Show 52 Wk High Low");
+
+            var range = document.getElementById("myRange_" + stockObject.SI_ID);
+            range.min = stockObject.Day_Price_Low;
+            range.max = stockObject.Day_Price_High;
+            range.value = stockObject.Price;
+        } else {
+            $("#Stock_Price_Low_" + stockObject.SI_ID).html("$" + stockObject.Price_Low);
+            $("#Stock_Price_High_" + stockObject.SI_ID).html("$" + stockObject.Price_High);
+
+            $("#Btn_Change_Stock_HighLow_DayYear_" + stockObject.SI_ID).html("Show Daily High Low");
+
+            var range = document.getElementById("myRange_" + stockObject.SI_ID);
+            range.min = stockObject.Price_Low;
+            range.max = stockObject.Price_High;
+            range.value = stockObject.Price;
+        }
+    }
+
+    function RefreshStocks() {
+        document.body.style.cursor = 'wait';
+        var url = "/Investments/RefreshStocks";
+        $.ajax({
+            type: "GET",
+            url: url,
+            success: function (data) {
+                document.body.style.cursor = 'default';
+                window.location.reload();
+            },
+            error: function (data) {
+                document.body.style.cursor = 'default';
+                window.location.reload();
+            }
+        })
+    }
+
+
+    function EditStockRecord(StockID) {
+        var url = "/Investments/GetStockDetailsByID?StockID=" + StockID;
+        $("#ModalTitle").html("Update Stock Info");
+        $("#ModalForEditStock").modal();
+        $.ajax({
+            type: "GET",
+            url: url,
+            success: function (data) {
+                var obj = JSON.parse(data);
+                $("#ModalTitle").html("Update Stock Info - " + obj.CompanyName);
+                $("#SI_ID").val(obj.SI_ID);
+                $("#Ticker").val(obj.Ticker);
+                $("#Exchange").val(obj.Exchange);
+                $("#CompanyName").val(obj.CompanyName);
+                $("#Price").val(obj.Price);
+                $("#Price_Low").val(obj.Price_Low);
+                $("#Price_High").val(obj.Price_High);
+                $("#P_E_Ratio").val(obj.P_E_Ratio);
+                $("#EPS").val(obj.EPS);
+                $("#DividendPerShare").val(obj.DividendPerShare);
+                $("#DividendPercent").val(obj.DividendPercent);
+                $("#DividendYieldPercent").val(obj.DividendYieldPercent);
+                $("#Comment").val(obj.Comment);
+            }
+        })
+    }
+
+
+    function DeleteStockRecord(StockID, StockTicker) {
+        $("#SI_ID").val(StockID);
+        $("#ModalStockMessage").html("Are You Sure You Want To Remove " + StockTicker + " Stock? ");
+        $("#ModalForDeleteStockConfirmation").modal();
+    }
+
+    function DeleteStockRecordConfirmed() {
+        var StockID = $("#SI_ID").val();
+        var url = "/Investments/DeleteStockRecord?StockID=" + StockID;
+        $.ajax({
+            type: "GET",
+            url: url,
+            success: function (data) {
+                $("#ModalForDeleteStockConfirmation").modal("hide");
+                $(".row_" + StockID).remove();
+            }
+        })
+    }
+
+    function AcceptedInvestmentDisclaimer(userID) {
+        var url = "/Investments/UpdateUsersInvestmentAccessRecord?UserID=" + userID;
+        $.ajax({
+            type: "GET",
+            url: url,
+            success: function (data) {
+                $("#ModalForInvestmentDisclaimer").modal("hide");
+                window.location.reload();
+            }
+        })
+    }
+
+    function DeclinedInvestmentDisclaimer() {
+        window.location.href = "@Url.Action("Index","Home")";
+    }
+
+</script>

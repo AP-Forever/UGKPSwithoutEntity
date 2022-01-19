@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27130.2024
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UGKPSwithoutEntity", "UGKPSwithoutEntity\UGKPSwithoutEntity.csproj", "{468D36EE-C1E4-4473-A400-DEB96BD6B7D2}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{468D36EE-C1E4-4473-A400-DEB96BD6B7D2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{468D36EE-C1E4-4473-A400-DEB96BD6B7D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{468D36EE-C1E4-4473-A400-DEB96BD6B7D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{468D36EE-C1E4-4473-A400-DEB96BD6B7D2}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {44796E3A-031B-41CB-B385-686EAA24FCB3}
+	EndGlobalSection
+EndGlobal

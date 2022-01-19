@@ -1,0 +1,82 @@
+﻿@*@model UGKPSwithoutEntity.Models.FamilyMember
+
+<div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            <button class="close" data-dismiss="modal">&times;</button>
+            <h3>Edit Family Member</h3>
+        </div>
+        <div class="modal-body" id="modalBody">
+            @using (Ajax.BeginForm("_EditFamilyMember", "Account", new AjaxOptions() { HttpMethod = "POST", UpdateTargetId = "ModalForEditMember", InsertionMode = InsertionMode.Replace, OnSuccess = "OnSuccess" }))
+            {
+                @Html.AntiForgeryToken()
+
+                <div class="form-horizontal">
+                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.FirstName, htmlAttributes: new { @class = "control-label col-md-4" })
+                        <div class="col-md-4">
+                            @Html.EditorFor(model => model.FirstName, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.FirstName, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.LastName, htmlAttributes: new { @class = "control-label col-md-4" })
+                        <div class="col-md-4">
+                            @Html.EditorFor(model => model.LastName, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.LastName, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.DateOfBirth, htmlAttributes: new { @class = "control-label col-md-4" })
+                        <div class="col-md-4">
+                            @Html.EditorFor(model => model.DateOfBirth, new { htmlAttributes = new { @class = "form-control date-picker", @type = "text" } })
+                            @Html.ValidationMessageFor(model => model.DateOfBirth, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Relation, htmlAttributes: new { @class = "control-label col-md-4" })
+                        <div class="col-md-4">
+                            @Html.EditorFor(model => model.Relation, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.Relation, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <input type="submit" value="Submit" class="btn btn-primary btn-block col-md-4" />
+                    </div>
+
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    //function OnSuccess(data){
+    //    if (data.success) {
+    //        jQuery('#ModalForEditMember').modal("hide");
+    //        alert('Member updated successfully!!!');
+    //        location.reload(true);
+    //    }
+    //}
+
+    $(document).ready(function () {
+        if (location.hash) {
+            $("a[href='" + location.hash + "']").tab("show");
+        }
+        $(document.body).on("click", "a[data-toggle='tab']", function (event) {
+            location.hash = this.getAttribute("href");
+        });
+    });
+    $(window).on("popstate", function () {
+        var anchor = location.hash || $("a[data-toggle='tab']").first().attr("href");
+        $("a[href='" + anchor + "']").tab("show");
+    });
+
+
+</script>*@
+
